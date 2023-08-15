@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class BasicController {
     @GetMapping("/")
-    public ResponseEntity<Song> index() {
-        Song song = new Song("Suicide & Redemption", "Metallica", "Death Magnetic");
+    public ResponseEntity<Song> status() {
+        Song song = new Song(1L, "Suicide & Redemption", "Metallica", "Death Magnetic");
         return ResponseEntity.status(HttpStatus.OK).body(song);
     }
 }
