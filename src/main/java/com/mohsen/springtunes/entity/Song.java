@@ -7,8 +7,8 @@ import jakarta.persistence.*;
 public class Song {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
+    @Column(name = "song_id")
+    private int id;
 
     @Column(name = "title")
     private String title;
@@ -22,18 +22,24 @@ public class Song {
     public Song() {
     }
 
-    public Song(Long id, String title, String artist, String album) {
+    public Song(int id, String title, String artist, String album) {
         this.id = id;
         this.title = title;
         this.artist = artist;
         this.album = album;
     }
 
-    public Long getId() {
+    public Song(String title, String artist, String album) {
+        this.title = title;
+        this.artist = artist;
+        this.album = album;
+    }
+
+    public int getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -78,7 +84,7 @@ public class Song {
 
         Song song = (Song) o;
 
-        if (!getId().equals(song.getId())) return false;
+        if (getId() != song.getId()) return false;
         if (!getTitle().equals(song.getTitle())) return false;
         if (!getArtist().equals(song.getArtist())) return false;
         return getAlbum().equals(song.getAlbum());
@@ -86,11 +92,10 @@ public class Song {
 
     @Override
     public int hashCode() {
-        int result = getId().hashCode();
+        int result = getId();
         result = 31 * result + getTitle().hashCode();
         result = 31 * result + getArtist().hashCode();
         result = 31 * result + getAlbum().hashCode();
         return result;
     }
-
 }
