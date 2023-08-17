@@ -13,8 +13,10 @@ public class Song {
     @Column(name = "title")
     private String title;
 
-    @Column(name = "artist")
-    private String artist;
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
+            CascadeType.DETACH, CascadeType.REFRESH})
+    @JoinColumn(name = "artist_id")
+    private Artist artist;
 
     @Column(name = "album")
     private String album;
@@ -22,16 +24,14 @@ public class Song {
     public Song() {
     }
 
-    public Song(int id, String title, String artist, String album) {
+    public Song(int id, String title, String album) {
         this.id = id;
         this.title = title;
-        this.artist = artist;
         this.album = album;
     }
 
-    public Song(String title, String artist, String album) {
+    public Song(String title, String album) {
         this.title = title;
-        this.artist = artist;
         this.album = album;
     }
 
@@ -51,11 +51,11 @@ public class Song {
         this.title = title;
     }
 
-    public String getArtist() {
+    public Artist getArtist() {
         return artist;
     }
 
-    public void setArtist(String artist) {
+    public void setArtist(Artist artist) {
         this.artist = artist;
     }
 
@@ -72,7 +72,7 @@ public class Song {
         return "Song{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
-                ", artist='" + artist + '\'' +
+                ", artist=" + artist +
                 ", album='" + album + '\'' +
                 '}';
     }
@@ -80,9 +80,7 @@ public class Song {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Song song = (Song) o;
+        if (!(o instanceof Song song)) return false;
 
         if (getId() != song.getId()) return false;
         if (!getTitle().equals(song.getTitle())) return false;
