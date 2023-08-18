@@ -1,26 +1,32 @@
 package com.mohsen.springtunes.entity;
 
 import jakarta.persistence.*;
-
 import java.util.List;
 
 @Entity
 @Table(name = "artists")
 public class Artist {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "artist_id")
     private int id;
 
     @Column(name = "name")
     private String name;
 
     @OneToMany(mappedBy = "artist", cascade = CascadeType.ALL)
-    @JoinColumn(name = "artist_id")
     private List<Song> songs;
 
-    public Artist(int id, String name) {
+    public Artist(int id, String name, List<Song> songs) {
         this.id = id;
         this.name = name;
+        this.songs = songs;
+    }
+
+    public Artist(String name, List<Song> songs) {
+        this.name = name;
+        this.songs = songs;
     }
 
     public Artist() {
@@ -76,4 +82,5 @@ public class Artist {
         result = 31 * result + getSongs().hashCode();
         return result;
     }
+
 }

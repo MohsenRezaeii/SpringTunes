@@ -13,7 +13,7 @@ public class Song {
     @Column(name = "title")
     private String title;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
+    @ManyToOne(cascade = {CascadeType.MERGE,
             CascadeType.DETACH, CascadeType.REFRESH})
     @JoinColumn(name = "artist_id")
     private Artist artist;
@@ -22,6 +22,13 @@ public class Song {
     private String album;
 
     public Song() {
+    }
+
+    public Song(int id, String title, Artist artist, String album) {
+        this.id = id;
+        this.title = title;
+        this.artist = artist;
+        this.album = album;
     }
 
     public Song(int id, String title, String album) {
