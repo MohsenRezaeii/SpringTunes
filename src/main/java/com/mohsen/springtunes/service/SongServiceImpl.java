@@ -23,7 +23,7 @@ public class SongServiceImpl implements SongService {
     }
 
     @Override
-    public Song findById(int id) {
+    public Song findById(Long id) {
         Optional<Song> optionalSong = songDAO.findById(id);
         return optionalSong.orElse(null);
     }
@@ -34,7 +34,7 @@ public class SongServiceImpl implements SongService {
     }
 
     @Override
-    public void deleteById(int id) {
+    public void deleteById(Long id) {
         songDAO.deleteById(id);
     }
 

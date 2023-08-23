@@ -1,6 +1,7 @@
 package com.mohsen.springtunes.entity;
 
 import jakarta.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -10,7 +11,7 @@ public class Artist {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "artist_id")
-    private int id;
+    private Long id;
 
     @Column(name = "name")
     private String name;
@@ -18,25 +19,14 @@ public class Artist {
     @OneToMany(mappedBy = "artist", cascade = CascadeType.ALL)
     private List<Song> songs;
 
-    public Artist(int id, String name, List<Song> songs) {
-        this.id = id;
-        this.name = name;
-        this.songs = songs;
-    }
-
-    public Artist(String name, List<Song> songs) {
-        this.name = name;
-        this.songs = songs;
-    }
-
     public Artist() {
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -56,6 +46,16 @@ public class Artist {
         this.songs = songs;
     }
 
+    public void addSong(Song song) {
+
+        if (songs == null) {
+            songs = new ArrayList<>();
+        }
+
+        this.songs.add(song);
+        song.setArtist(this);
+    }
+
     @Override
     public String toString() {
         return "Artist{" +
@@ -63,24 +63,6 @@ public class Artist {
                 ", name='" + name + '\'' +
                 ", songs=" + songs +
                 '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Artist artist)) return false;
-
-        if (getId() != artist.getId()) return false;
-        if (!getName().equals(artist.getName())) return false;
-        return getSongs().equals(artist.getSongs());
-    }
-
-    @Override
-    public int hashCode() {
-        int result = getId();
-        result = 31 * result + getName().hashCode();
-        result = 31 * result + getSongs().hashCode();
-        return result;
     }
 
 }

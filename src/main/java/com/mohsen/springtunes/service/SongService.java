@@ -7,10 +7,10 @@ public interface SongService {
 
     List<Song> findAll();
 
-    Song findById(int id);
+    Song findById(Long id);
 
     Song save(Song song);
 
-    void deleteById(int id);
+    void deleteById(Long id);
 
 }

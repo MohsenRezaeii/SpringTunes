@@ -8,10 +8,10 @@ public interface ArtistService {
 
     List<Artist> findAll();
 
-    Artist findById(int id);
+    Artist findById(Long id);
 
     Artist save(Artist artist);
 
-    void deleteById(int id);
+    void deleteById(Long id);
 
 }

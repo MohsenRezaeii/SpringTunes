@@ -24,7 +24,7 @@ public class ArtistServiceImpl implements ArtistService {
     }
 
     @Override
-    public Artist findById(int id) {
+    public Artist findById(Long id) {
         Optional<Artist> optionalArtist = artistDAO.findById(id);
         return optionalArtist.orElse(null);
     }
@@ -35,7 +35,7 @@ public class ArtistServiceImpl implements ArtistService {
     }
 
     @Override
-    public void deleteById(int id) {
+    public void deleteById(Long id) {
         artistDAO.deleteById(id);
     }
 

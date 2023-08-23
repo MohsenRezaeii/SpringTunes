@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface SongDAO extends JpaRepository<Song, Integer> {
+public interface SongDAO extends JpaRepository<Song, Long> {
 }

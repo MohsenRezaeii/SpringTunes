@@ -13,7 +13,7 @@ public class Song {
     @Column(name = "title")
     private String title;
 
-    @ManyToOne(cascade = {CascadeType.MERGE,
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
             CascadeType.DETACH, CascadeType.REFRESH})
     @JoinColumn(name = "artist_id")
     private Artist artist;
@@ -22,24 +22,6 @@ public class Song {
     private String album;
 
     public Song() {
-    }
-
-    public Song(int id, String title, Artist artist, String album) {
-        this.id = id;
-        this.title = title;
-        this.artist = artist;
-        this.album = album;
-    }
-
-    public Song(int id, String title, String album) {
-        this.id = id;
-        this.title = title;
-        this.album = album;
-    }
-
-    public Song(String title, String album) {
-        this.title = title;
-        this.album = album;
     }
 
     public int getId() {
@@ -84,23 +66,4 @@ public class Song {
                 '}';
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Song song)) return false;
-
-        if (getId() != song.getId()) return false;
-        if (!getTitle().equals(song.getTitle())) return false;
-        if (!getArtist().equals(song.getArtist())) return false;
-        return getAlbum().equals(song.getAlbum());
-    }
-
-    @Override
-    public int hashCode() {
-        int result = getId();
-        result = 31 * result + getTitle().hashCode();
-        result = 31 * result + getArtist().hashCode();
-        result = 31 * result + getAlbum().hashCode();
-        return result;
-    }
 }
