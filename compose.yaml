@@ -1,4 +1,8 @@
 services:
+  spring-tunes:
+    image: 'mohsenrezaei89/spring-tunes:0.0.1-SNAPSHOT'
+    ports:
+      - "8080:8080"
   postgres:
     image: 'postgres:latest'
     volumes:
