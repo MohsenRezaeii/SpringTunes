@@ -1,6 +1,16 @@
 services:
   spring-tunes:
+    depends_on:
+      postgres:
+        condition: service_healthy
     image: 'mohsenrezaei89/spring-tunes:0.0.1-SNAPSHOT'
+    build:
+      context: .
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/mydatabase
+      - SPRING_DATASOURCE_USERNAME=myuser
+      - SPRING_DATASOURCE_PASSWORD=secret
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
     ports:
       - "8080:8080"
   postgres:
@@ -12,5 +22,11 @@ services:
       - 'POSTGRES_DB=mydatabase'
       - 'POSTGRES_PASSWORD=secret'
       - 'POSTGRES_USER=myuser'
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready", "-d", "db_prod" ]
+      interval: 30s
+      timeout: 60s
+      retries: 5
+      start_period: 80s
     ports:
       - '5432:5432'
