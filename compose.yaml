@@ -3,7 +3,7 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-    image: 'mohsenrezaei89/spring-tunes:0.0.1-SNAPSHOT'
+    image: mohsenrezaei89/spring-tunes:0.0.1-SNAPSHOT
     build:
       context: .
     environment:
@@ -12,21 +12,22 @@ services:
       - SPRING_DATASOURCE_PASSWORD=secret
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
     ports:
-      - "8080:8080"
+      - 8080:8080
   postgres:
-    image: 'postgres:latest'
+    image: postgres:latest
     volumes:
       - ./postgres-data:/var/lib/postgresql/data
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     environment:
-      - 'POSTGRES_DB=mydatabase'
-      - 'POSTGRES_PASSWORD=secret'
-      - 'POSTGRES_USER=myuser'
+      - POSTGRES_DB=mydatabase
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_USER=myuser
+      - POSTGRES_PORT=5432
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready", "-d", "db_prod" ]
-      interval: 30s
-      timeout: 60s
-      retries: 5
-      start_period: 80s
+      test: [CMD-SHELL, pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB -h localhost -p $$POSTGRES_PORT]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+      start_period: 10s
     ports:
-      - '5432:5432'
+      - $POSTGRES_PORT:5432
