@@ -43,8 +43,15 @@ public class BasicController {
 
     @PostMapping("/newArtist")
     public ResponseEntity<Artist> newArtist(@RequestBody Artist artist) {
-        artistService.save(artist);
-        return ResponseEntity.status(HttpStatus.OK).body(artist);
+        if (artist.getSongs() != null) {
+            for (Song song : artist.getSongs()) {
+                songService.save(song);
+                song.setArtist(artist);
+            }
+        }
+        System.out.println(artist.getSongs());
+        Artist tempArtist = artistService.save(artist);
+        return ResponseEntity.status(HttpStatus.OK).body(tempArtist);
     }
 
 
@@ -65,6 +72,13 @@ public class BasicController {
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @DeleteMapping("/songs/{songId}")
+    public ResponseEntity<Song> deleteSong(@PathVariable("songId") Long songId) {
+        Song song = songService.findById(songId);
+        songService.deleteById(songId);
+        return new ResponseEntity<>(song, HttpStatus.OK);
     }
 
 }

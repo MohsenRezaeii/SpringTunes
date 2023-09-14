@@ -4,6 +4,7 @@ import com.mohsen.springtunes.dao.ArtistDAO;
 import com.mohsen.springtunes.entity.Artist;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -29,11 +30,13 @@ public class ArtistServiceImpl implements ArtistService {
         return optionalArtist.orElse(null);
     }
 
+    @Transactional
     @Override
     public Artist save(Artist artist) {
         return artistDAO.save(artist);
     }
 
+    @Transactional
     @Override
     public void deleteById(Long id) {
         artistDAO.deleteById(id);
