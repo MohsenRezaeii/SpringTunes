@@ -1,5 +1,6 @@
 package com.mohsen.springtunes.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,10 +17,15 @@ public class Artist {
     @Column(name = "name")
     private String name;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "artist", cascade = CascadeType.ALL)
     private List<Song> songs;
 
     public Artist() {
+    }
+
+    public Artist(String name) {
+        this.name = name;
     }
 
     public Long getId() {

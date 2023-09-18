@@ -1,5 +1,6 @@
 package com.mohsen.springtunes.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 @Entity
@@ -13,6 +14,7 @@ public class Song {
     @Column(name = "title")
     private String title;
 
+    @JsonBackReference
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE,
             CascadeType.DETACH, CascadeType.REFRESH})
     @JoinColumn(name = "artist_id")
@@ -61,7 +63,6 @@ public class Song {
         return "Song{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
-                ", artist=" + artist +
                 ", album='" + album + '\'' +
                 '}';
     }

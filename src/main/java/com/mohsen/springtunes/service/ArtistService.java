@@ -10,8 +10,11 @@ public interface ArtistService {
 
     Artist findById(Long id);
 
-    Artist save(Artist artist);
+    Artist save(Artist artist) throws Exception;
 
     void deleteById(Long id);
+
+    Artist findByName(String name);
+
 
 }

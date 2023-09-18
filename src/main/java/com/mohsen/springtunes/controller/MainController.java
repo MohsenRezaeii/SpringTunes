@@ -12,65 +12,53 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-public class BasicController {
+public class MainController {
 
     SongService songService;
     ArtistService artistService;
 
     @Autowired
-    public BasicController(SongService songService, ArtistService artistService) {
+    public MainController(SongService songService, ArtistService artistService) {
         this.songService = songService;
         this.artistService = artistService;
     }
 
     @GetMapping("/songs")
     public ResponseEntity<List<Song>> findAllSongs() {
-        return ResponseEntity.status(HttpStatus.OK).body(songService.findAll());
+        List<Song> songs = songService.findAll();
+        return new ResponseEntity<>(songs, HttpStatus.OK);
     }
 
     @PostMapping("/newSong")
     public ResponseEntity<Song> newSong(@RequestBody Song song) {
-        Artist artist = song.getArtist();
-        artist.addSong(song);
-        songService.save(song);
-        return ResponseEntity.status(HttpStatus.OK).body(song);
+        if (song.getArtist() != null) {
+            String artistName = song.getArtist().getName();
+            Artist tempArtist = artistService.findByName(artistName);
+            tempArtist.addSong(song);
+        }
+        Song savedSong = songService.save(song);
+        return new ResponseEntity<>(savedSong, HttpStatus.OK);
     }
 
     @GetMapping("/artists")
     public ResponseEntity<List<Artist>> findAllArtists() {
-        return ResponseEntity.status(HttpStatus.OK).body(artistService.findAll());
+        List<Artist> artists = artistService.findAll();
+        return new ResponseEntity<>(artists, HttpStatus.OK);
     }
 
     @PostMapping("/newArtist")
-    public ResponseEntity<Artist> newArtist(@RequestBody Artist artist) {
+    public ResponseEntity<String> newArtist(@RequestBody Artist artist) {
         if (artist.getSongs() != null) {
             for (Song song : artist.getSongs()) {
                 songService.save(song);
                 song.setArtist(artist);
             }
         }
-        System.out.println(artist.getSongs());
-        Artist tempArtist = artistService.save(artist);
-        return ResponseEntity.status(HttpStatus.OK).body(tempArtist);
-    }
-
-
-    @PostMapping("/addSong")
-    public ResponseEntity<Song> addSong(@RequestBody Song song) {
         try {
-            // Set the artist for the song (assuming artistId is provided in the request)
-            Artist artist = song.getArtist();
-            if (artist != null && artist.getId() != null) {
-                artist = artistService.findById(artist.getId());
-                song.setArtist(artist);
-            }
-
-            // Save the song to the database
-            songService.save(song);
-
-            return new ResponseEntity<>(song, HttpStatus.CREATED);
+            Artist tempArtist = artistService.save(artist);
+            return new ResponseEntity<>("Artist saved: " + tempArtist, HttpStatus.CREATED);
         } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
         }
     }
 
@@ -79,6 +67,13 @@ public class BasicController {
         Song song = songService.findById(songId);
         songService.deleteById(songId);
         return new ResponseEntity<>(song, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/artists/{artistId}")
+    public ResponseEntity<Artist> deleteArtist(@PathVariable("artistId") Long artistId) {
+        Artist artist = artistService.findById(artistId);
+        artistService.deleteById(artistId);
+        return new ResponseEntity<>(artist, HttpStatus.OK);
     }
 
 }

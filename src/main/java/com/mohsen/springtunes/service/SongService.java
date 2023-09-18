@@ -13,4 +13,6 @@ public interface SongService {
 
     void deleteById(Long id);
 
+    Song findByTitle(String title);
+
 }

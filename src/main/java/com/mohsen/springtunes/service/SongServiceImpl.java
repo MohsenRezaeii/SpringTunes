@@ -41,4 +41,9 @@ public class SongServiceImpl implements SongService {
         songDAO.deleteById(id);
     }
 
+    @Override
+    public Song findByTitle(String title) {
+        return songDAO.findByTitle(title);
+    }
+
 }
