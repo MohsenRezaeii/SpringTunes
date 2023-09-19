@@ -2,6 +2,10 @@ package com.mohsen.springtunes.controller;
 
 import com.mohsen.springtunes.entity.Artist;
 import com.mohsen.springtunes.entity.Song;
+import com.mohsen.springtunes.exception.DuplicateArtistError;
+import com.mohsen.springtunes.exception.DuplicateArtistException;
+import com.mohsen.springtunes.exception.DuplicateSongError;
+import com.mohsen.springtunes.exception.DuplicateSongException;
 import com.mohsen.springtunes.service.ArtistService;
 import com.mohsen.springtunes.service.SongService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalTime;
 import java.util.List;
 
 @RestController
@@ -31,7 +36,7 @@ public class MainController {
     }
 
     @PostMapping("/songs")
-    public ResponseEntity<Song> newSong(@RequestBody Song song) throws Exception {
+    public ResponseEntity<Song> newSong(@RequestBody Song song) {
         if (song.getArtist() != null) {
             String artistName = song.getArtist().getName();
             Artist tempArtist = artistService.findByName(artistName);
@@ -41,7 +46,7 @@ public class MainController {
         Song foundSong = songService.findByTitle(song.getTitle());
         if (foundSong != null && song.getArtist() != null &&
                 song.getArtist().getName().equals(foundSong.getArtist().getName())) {
-            throw new Exception("Song already exists: " + foundSong);
+            throw new DuplicateSongException("Song already exists: " + foundSong);
         }
 
         Song savedSong = songService.save(song);
@@ -55,19 +60,21 @@ public class MainController {
     }
 
     @PostMapping("/artists")
-    public ResponseEntity<String> newArtist(@RequestBody Artist artist) {
+    public ResponseEntity<Artist> newArtist(@RequestBody Artist artist) {
         if (artist.getSongs() != null) {
             for (Song song : artist.getSongs()) {
                 songService.save(song);
                 song.setArtist(artist);
             }
         }
-        try {
-            Artist tempArtist = artistService.save(artist);
-            return new ResponseEntity<>("Artist saved: " + tempArtist, HttpStatus.CREATED);
-        } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+
+        String artistName = artist.getName();
+        Artist foundArtist = artistService.findByName(artistName);
+        if (foundArtist != null) {
+            throw new DuplicateArtistException("Artist already exists: " + foundArtist);
         }
+        Artist savedArtist = artistService.save(artist);
+        return new ResponseEntity<>(savedArtist, HttpStatus.OK);
     }
 
     @DeleteMapping("/songs/{songId}")
@@ -82,6 +89,24 @@ public class MainController {
         Artist artist = artistService.findById(artistId);
         artistService.deleteById(artistId);
         return new ResponseEntity<>(artist, HttpStatus.OK);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<DuplicateSongError> handleException(DuplicateSongException exception) {
+        DuplicateSongError error = new DuplicateSongError();
+        error.setMessage(exception.getMessage());
+        error.setStatus(HttpStatus.CONFLICT.value());
+        error.setTimeStamp(LocalTime.now());
+        return new ResponseEntity<>(error, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<DuplicateArtistError> handleException(DuplicateArtistException exception) {
+        DuplicateArtistError error = new DuplicateArtistError();
+        error.setMessage(exception.getMessage());
+        error.setStatus(HttpStatus.CONFLICT.value());
+        error.setTimeStamp(LocalTime.now());
+        return new ResponseEntity<>(error, HttpStatus.CONFLICT);
     }
 
 }

@@ -32,12 +32,7 @@ public class ArtistServiceImpl implements ArtistService {
 
     @Transactional
     @Override
-    public Artist save(Artist artist) throws Exception {
-        String artistName = artist.getName();
-        Artist tempArtist = artistDAO.findByName(artistName);
-        if (tempArtist != null) {
-            throw new Exception("Artist already exists: " + tempArtist);
-        }
+    public Artist save(Artist artist) {
         return artistDAO.save(artist);
     }
 
@@ -49,11 +44,7 @@ public class ArtistServiceImpl implements ArtistService {
 
     @Override
     public Artist findByName(String name) {
-        Artist artist = artistDAO.findByName(name);
-        if (artist == null) {
-            artist = new Artist(name);
-        }
-        return artist;
+        return artistDAO.findByName(name);
     }
 
 }
