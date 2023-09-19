@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequestMapping("/api/v1")
 public class MainController {
 
     SongService songService;
@@ -29,13 +30,20 @@ public class MainController {
         return new ResponseEntity<>(songs, HttpStatus.OK);
     }
 
-    @PostMapping("/newSong")
-    public ResponseEntity<Song> newSong(@RequestBody Song song) {
+    @PostMapping("/songs")
+    public ResponseEntity<Song> newSong(@RequestBody Song song) throws Exception {
         if (song.getArtist() != null) {
             String artistName = song.getArtist().getName();
             Artist tempArtist = artistService.findByName(artistName);
             tempArtist.addSong(song);
         }
+
+        Song foundSong = songService.findByTitle(song.getTitle());
+        if (foundSong != null && song.getArtist() != null &&
+                song.getArtist().getName().equals(foundSong.getArtist().getName())) {
+            throw new Exception("Song already exists: " + foundSong);
+        }
+
         Song savedSong = songService.save(song);
         return new ResponseEntity<>(savedSong, HttpStatus.OK);
     }
@@ -46,7 +54,7 @@ public class MainController {
         return new ResponseEntity<>(artists, HttpStatus.OK);
     }
 
-    @PostMapping("/newArtist")
+    @PostMapping("/artists")
     public ResponseEntity<String> newArtist(@RequestBody Artist artist) {
         if (artist.getSongs() != null) {
             for (Song song : artist.getSongs()) {
