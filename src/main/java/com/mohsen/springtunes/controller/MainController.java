@@ -2,9 +2,7 @@ package com.mohsen.springtunes.controller;
 
 import com.mohsen.springtunes.entity.Artist;
 import com.mohsen.springtunes.entity.Song;
-import com.mohsen.springtunes.exception.DuplicateArtistError;
 import com.mohsen.springtunes.exception.DuplicateArtistException;
-import com.mohsen.springtunes.exception.DuplicateSongError;
 import com.mohsen.springtunes.exception.DuplicateSongException;
 import com.mohsen.springtunes.service.ArtistService;
 import com.mohsen.springtunes.service.SongService;
@@ -13,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalTime;
 import java.util.List;
 
 @RestController
@@ -89,24 +86,6 @@ public class MainController {
         Artist artist = artistService.findById(artistId);
         artistService.deleteById(artistId);
         return new ResponseEntity<>(artist, HttpStatus.OK);
-    }
-
-    @ExceptionHandler
-    public ResponseEntity<DuplicateSongError> handleException(DuplicateSongException exception) {
-        DuplicateSongError error = new DuplicateSongError();
-        error.setMessage(exception.getMessage());
-        error.setStatus(HttpStatus.CONFLICT.value());
-        error.setTimeStamp(LocalTime.now());
-        return new ResponseEntity<>(error, HttpStatus.CONFLICT);
-    }
-
-    @ExceptionHandler
-    public ResponseEntity<DuplicateArtistError> handleException(DuplicateArtistException exception) {
-        DuplicateArtistError error = new DuplicateArtistError();
-        error.setMessage(exception.getMessage());
-        error.setStatus(HttpStatus.CONFLICT.value());
-        error.setTimeStamp(LocalTime.now());
-        return new ResponseEntity<>(error, HttpStatus.CONFLICT);
     }
 
 }
