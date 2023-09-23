@@ -75,15 +75,21 @@ public class MainController {
     }
 
     @DeleteMapping("/songs/{songId}")
-    public ResponseEntity<Song> deleteSong(@PathVariable("songId") Long songId) {
+    public ResponseEntity<Song> deleteSong(@PathVariable("songId") Long songId) throws Exception {
         Song song = songService.findById(songId);
+        if (song == null) {
+            throw new Exception("Song does not exist: " + songId);
+        }
         songService.deleteById(songId);
         return new ResponseEntity<>(song, HttpStatus.OK);
     }
 
     @DeleteMapping("/artists/{artistId}")
-    public ResponseEntity<Artist> deleteArtist(@PathVariable("artistId") Long artistId) {
+    public ResponseEntity<Artist> deleteArtist(@PathVariable("artistId") Long artistId) throws Exception {
         Artist artist = artistService.findById(artistId);
+        if (artist == null) {
+            throw new Exception("Artist does not exist: " + artistId);
+        }
         artistService.deleteById(artistId);
         return new ResponseEntity<>(artist, HttpStatus.OK);
     }
