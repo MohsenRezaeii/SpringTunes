@@ -2,8 +2,10 @@ package com.mohsen.springtunes.controller;
 
 import com.mohsen.springtunes.entity.Artist;
 import com.mohsen.springtunes.entity.Song;
+import com.mohsen.springtunes.exception.ArtistNotFoundException;
 import com.mohsen.springtunes.exception.DuplicateArtistException;
 import com.mohsen.springtunes.exception.DuplicateSongException;
+import com.mohsen.springtunes.exception.SongNotFoundException;
 import com.mohsen.springtunes.service.ArtistService;
 import com.mohsen.springtunes.service.SongService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,11 +34,26 @@ public class MainController {
         return new ResponseEntity<>(songs, HttpStatus.OK);
     }
 
+    @GetMapping("/songs/{songId}")
+    public ResponseEntity<Song> findSongById(@PathVariable Long songId) {
+        Song foundSong = songService.findById(songId);
+
+        if (foundSong == null) {
+            throw new SongNotFoundException("Song not found: " + songId);
+        }
+
+        return new ResponseEntity<>(foundSong, HttpStatus.OK);
+    }
+
     @PostMapping("/songs")
     public ResponseEntity<Song> newSong(@RequestBody Song song) {
         if (song.getArtist() != null) {
             String artistName = song.getArtist().getName();
             Artist tempArtist = artistService.findByName(artistName);
+            if (tempArtist == null) {
+                tempArtist = new Artist(artistName);
+                tempArtist = artistService.save(tempArtist);
+            }
             tempArtist.addSong(song);
         }
 
@@ -55,6 +72,18 @@ public class MainController {
         List<Artist> artists = artistService.findAll();
         return new ResponseEntity<>(artists, HttpStatus.OK);
     }
+
+    @GetMapping("/artists/{artistId}")
+    public ResponseEntity<Artist> findArtistById(@PathVariable Long artistId) {
+        Artist foundArtist = artistService.findById(artistId);
+
+        if (foundArtist == null) {
+            throw new ArtistNotFoundException("Artist not found: " + artistId);
+        }
+
+        return new ResponseEntity<>(foundArtist, HttpStatus.OK);
+    }
+
 
     @PostMapping("/artists")
     public ResponseEntity<Artist> newArtist(@RequestBody Artist artist) {

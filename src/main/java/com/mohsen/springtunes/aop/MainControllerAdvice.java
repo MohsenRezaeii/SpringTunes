@@ -38,4 +38,22 @@ public class MainControllerAdvice {
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    @ExceptionHandler
+    public ResponseEntity<SongNotFoundError> handleSongNotFoundException(SongNotFoundException exception) {
+        SongNotFoundError error = new SongNotFoundError();
+        error.setMessage(exception.getMessage());
+        error.setStatus(HttpStatus.NOT_FOUND.value());
+        error.setTimeStamp(LocalTime.now());
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ArtistNotFoundError> handleArtistNotFoundException(ArtistNotFoundException exception) {
+        ArtistNotFoundError error = new ArtistNotFoundError();
+        error.setMessage(exception.getMessage());
+        error.setStatus(HttpStatus.NOT_FOUND.value());
+        error.setTimeStamp(LocalTime.now());
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+
 }
