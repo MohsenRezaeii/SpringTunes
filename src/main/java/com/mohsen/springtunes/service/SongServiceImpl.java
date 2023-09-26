@@ -4,7 +4,6 @@ import com.mohsen.springtunes.dao.SongDAO;
 import com.mohsen.springtunes.entity.Song;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -29,13 +28,11 @@ public class SongServiceImpl implements SongService {
         return optionalSong.orElse(null);
     }
 
-    @Transactional
     @Override
     public Song save(Song song) {
         return songDAO.save(song);
     }
 
-    @Transactional
     @Override
     public void deleteById(Long id) {
         songDAO.deleteById(id);
@@ -44,6 +41,11 @@ public class SongServiceImpl implements SongService {
     @Override
     public Song findByTitle(String title) {
         return songDAO.findByTitle(title);
+    }
+
+    @Override
+    public Song updateSong(Song song) {
+        return songDAO.updateSong(song);
     }
 
 }

@@ -67,6 +67,22 @@ public class MainController {
         return new ResponseEntity<>(savedSong, HttpStatus.OK);
     }
 
+    @PutMapping("/songs")
+    public ResponseEntity<Song> updateSong(@RequestBody Song song) {
+        Song updatedSong = songService.updateSong(song) ;
+        return new ResponseEntity<>(updatedSong, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/songs/{songId}")
+    public ResponseEntity<Song> deleteSong(@PathVariable("songId") Long songId) {
+        Song song = songService.findById(songId);
+        if (song == null) {
+            throw new SongNotFoundException("Song does not exist: " + songId);
+        }
+        songService.deleteById(songId);
+        return new ResponseEntity<>(song, HttpStatus.OK);
+    }
+
     @GetMapping("/artists")
     public ResponseEntity<List<Artist>> findAllArtists() {
         List<Artist> artists = artistService.findAll();
@@ -83,7 +99,6 @@ public class MainController {
 
         return new ResponseEntity<>(foundArtist, HttpStatus.OK);
     }
-
 
     @PostMapping("/artists")
     public ResponseEntity<Artist> newArtist(@RequestBody Artist artist) {
@@ -103,21 +118,11 @@ public class MainController {
         return new ResponseEntity<>(savedArtist, HttpStatus.OK);
     }
 
-    @DeleteMapping("/songs/{songId}")
-    public ResponseEntity<Song> deleteSong(@PathVariable("songId") Long songId) throws Exception {
-        Song song = songService.findById(songId);
-        if (song == null) {
-            throw new Exception("Song does not exist: " + songId);
-        }
-        songService.deleteById(songId);
-        return new ResponseEntity<>(song, HttpStatus.OK);
-    }
-
     @DeleteMapping("/artists/{artistId}")
-    public ResponseEntity<Artist> deleteArtist(@PathVariable("artistId") Long artistId) throws Exception {
+    public ResponseEntity<Artist> deleteArtist(@PathVariable("artistId") Long artistId) {
         Artist artist = artistService.findById(artistId);
         if (artist == null) {
-            throw new Exception("Artist does not exist: " + artistId);
+            throw new ArtistNotFoundException("Artist does not exist: " + artistId);
         }
         artistService.deleteById(artistId);
         return new ResponseEntity<>(artist, HttpStatus.OK);
