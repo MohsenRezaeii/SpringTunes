@@ -2,6 +2,7 @@ package com.mohsen.springtunes.service;
 
 import com.mohsen.springtunes.dao.ArtistDAO;
 import com.mohsen.springtunes.entity.Artist;
+import com.mohsen.springtunes.exception.ArtistNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +27,7 @@ public class ArtistServiceImpl implements ArtistService {
     @Override
     public Artist findById(Long id) {
         Optional<Artist> optionalArtist = artistDAO.findById(id);
-        return optionalArtist.orElse(null);
+        return optionalArtist.orElseThrow(() -> new ArtistNotFoundException("Artist not found: " + id));
     }
 
     @Override

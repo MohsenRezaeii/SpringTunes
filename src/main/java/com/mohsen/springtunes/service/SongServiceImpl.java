@@ -2,6 +2,7 @@ package com.mohsen.springtunes.service;
 
 import com.mohsen.springtunes.dao.SongDAO;
 import com.mohsen.springtunes.entity.Song;
+import com.mohsen.springtunes.exception.SongNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +26,7 @@ public class SongServiceImpl implements SongService {
     @Override
     public Song findById(Long id) {
         Optional<Song> optionalSong = songDAO.findById(id);
-        return optionalSong.orElse(null);
+        return optionalSong.orElseThrow(() -> new SongNotFoundException("Song not found: " + id));
     }
 
     @Override
@@ -41,11 +42,6 @@ public class SongServiceImpl implements SongService {
     @Override
     public Song findByTitle(String title) {
         return songDAO.findByTitle(title);
-    }
-
-    @Override
-    public Song updateSong(Song song) {
-        return songDAO.updateSong(song);
     }
 
 }

@@ -15,6 +15,4 @@ public interface SongService {
 
     Song findByTitle(String title);
 
-    Song updateSong(Song song);
-
 }

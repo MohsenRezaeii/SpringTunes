@@ -8,5 +8,4 @@ import org.springframework.stereotype.Repository;
 public interface SongDAO extends JpaRepository<Song, Long> {
     Song findByTitle(String title);
 
-    Song updateSong(Song song);
 }

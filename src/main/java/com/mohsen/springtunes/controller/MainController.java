@@ -2,10 +2,8 @@ package com.mohsen.springtunes.controller;
 
 import com.mohsen.springtunes.entity.Artist;
 import com.mohsen.springtunes.entity.Song;
-import com.mohsen.springtunes.exception.ArtistNotFoundException;
 import com.mohsen.springtunes.exception.DuplicateArtistException;
 import com.mohsen.springtunes.exception.DuplicateSongException;
-import com.mohsen.springtunes.exception.SongNotFoundException;
 import com.mohsen.springtunes.service.ArtistService;
 import com.mohsen.springtunes.service.SongService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,11 +35,6 @@ public class MainController {
     @GetMapping("/songs/{songId}")
     public ResponseEntity<Song> findSongById(@PathVariable Long songId) {
         Song foundSong = songService.findById(songId);
-
-        if (foundSong == null) {
-            throw new SongNotFoundException("Song not found: " + songId);
-        }
-
         return new ResponseEntity<>(foundSong, HttpStatus.OK);
     }
 
@@ -69,16 +62,13 @@ public class MainController {
 
     @PutMapping("/songs")
     public ResponseEntity<Song> updateSong(@RequestBody Song song) {
-        Song updatedSong = songService.updateSong(song) ;
+        Song updatedSong = songService.save(song) ;
         return new ResponseEntity<>(updatedSong, HttpStatus.OK);
     }
 
     @DeleteMapping("/songs/{songId}")
     public ResponseEntity<Song> deleteSong(@PathVariable("songId") Long songId) {
         Song song = songService.findById(songId);
-        if (song == null) {
-            throw new SongNotFoundException("Song does not exist: " + songId);
-        }
         songService.deleteById(songId);
         return new ResponseEntity<>(song, HttpStatus.OK);
     }
@@ -92,11 +82,6 @@ public class MainController {
     @GetMapping("/artists/{artistId}")
     public ResponseEntity<Artist> findArtistById(@PathVariable Long artistId) {
         Artist foundArtist = artistService.findById(artistId);
-
-        if (foundArtist == null) {
-            throw new ArtistNotFoundException("Artist not found: " + artistId);
-        }
-
         return new ResponseEntity<>(foundArtist, HttpStatus.OK);
     }
 
@@ -121,9 +106,6 @@ public class MainController {
     @DeleteMapping("/artists/{artistId}")
     public ResponseEntity<Artist> deleteArtist(@PathVariable("artistId") Long artistId) {
         Artist artist = artistService.findById(artistId);
-        if (artist == null) {
-            throw new ArtistNotFoundException("Artist does not exist: " + artistId);
-        }
         artistService.deleteById(artistId);
         return new ResponseEntity<>(artist, HttpStatus.OK);
     }
