@@ -60,12 +60,6 @@ public class MainController {
         return new ResponseEntity<>(savedSong, HttpStatus.OK);
     }
 
-    @PutMapping("/songs")
-    public ResponseEntity<Song> updateSong(@RequestBody Song song) {
-        Song updatedSong = songService.save(song) ;
-        return new ResponseEntity<>(updatedSong, HttpStatus.OK);
-    }
-
     @DeleteMapping("/songs/{songId}")
     public ResponseEntity<Song> deleteSong(@PathVariable("songId") Long songId) {
         Song song = songService.findById(songId);
