@@ -3,7 +3,7 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-    image: mohsenrezaei89/spring-tunes:0.0.1-SNAPSHOT
+    image: mohsenrezaei89/spring-tunes:latest
     build:
       context: .
     environment:
@@ -15,6 +15,9 @@ services:
       - 8080:8080
   postgres:
     image: postgres:latest
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     environment:
       - POSTGRES_DB=mydatabase
       - POSTGRES_PASSWORD=secret
