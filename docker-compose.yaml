@@ -1,4 +1,18 @@
 services:
+  spring-tunes:
+    depends_on:
+      postgres:
+        condition: service_healthy
+    image: mohsenrezaei89/spring-tunes:latest
+    build:
+      context: .
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/mydatabase
+      - SPRING_DATASOURCE_USERNAME=myuser
+      - SPRING_DATASOURCE_PASSWORD=secret
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    ports:
+      - 8080:8080
   postgres:
     image: postgres:latest
     volumes:
