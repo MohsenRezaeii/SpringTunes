@@ -2,8 +2,6 @@ package com.mohsen.springtunes.controller;
 
 import com.mohsen.springtunes.entity.Artist;
 import com.mohsen.springtunes.entity.Song;
-import com.mohsen.springtunes.exception.DuplicateArtistException;
-import com.mohsen.springtunes.exception.DuplicateSongException;
 import com.mohsen.springtunes.service.ArtistService;
 import com.mohsen.springtunes.service.SongService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,22 +38,6 @@ public class MainController {
 
     @PostMapping("/songs")
     public ResponseEntity<Song> newSong(@RequestBody Song song) {
-        if (song.getArtist() != null) {
-            String artistName = song.getArtist().getName();
-            Artist tempArtist = artistService.findByName(artistName);
-            if (tempArtist == null) {
-                tempArtist = new Artist(artistName);
-                tempArtist = artistService.save(tempArtist);
-            }
-            tempArtist.addSong(song);
-        }
-
-        Song foundSong = songService.findByTitle(song.getTitle());
-        if (foundSong != null && song.getArtist() != null &&
-                song.getArtist().getName().equals(foundSong.getArtist().getName())) {
-            throw new DuplicateSongException("Song already exists: " + foundSong);
-        }
-
         Song savedSong = songService.save(song);
         return new ResponseEntity<>(savedSong, HttpStatus.OK);
     }
@@ -81,18 +63,6 @@ public class MainController {
 
     @PostMapping("/artists")
     public ResponseEntity<Artist> newArtist(@RequestBody Artist artist) {
-        if (artist.getSongs() != null) {
-            for (Song song : artist.getSongs()) {
-                songService.save(song);
-                song.setArtist(artist);
-            }
-        }
-
-        String artistName = artist.getName();
-        Artist foundArtist = artistService.findByName(artistName);
-        if (foundArtist != null) {
-            throw new DuplicateArtistException("Artist already exists: " + foundArtist);
-        }
         Artist savedArtist = artistService.save(artist);
         return new ResponseEntity<>(savedArtist, HttpStatus.OK);
     }
