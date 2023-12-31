@@ -1,6 +1,7 @@
 package com.mohsen.springtunes.service;
 
 import com.mohsen.springtunes.dao.ArtistDAO;
+import com.mohsen.springtunes.dao.SongDAO;
 import com.mohsen.springtunes.entity.Artist;
 import com.mohsen.springtunes.entity.Song;
 import com.mohsen.springtunes.exception.ArtistNotFoundException;
@@ -15,14 +16,17 @@ import java.util.Optional;
 @Service
 public class ArtistServiceImpl implements ArtistService {
 
+    private final SongDAO songDAO;
     ArtistDAO artistDAO;
     SongService songService;
 
     @Autowired
     @Lazy
-    public ArtistServiceImpl(ArtistDAO artistDAO, SongService songService) {
+    public ArtistServiceImpl(ArtistDAO artistDAO, SongService songService,
+                             SongDAO songDAO) {
         this.artistDAO = artistDAO;
         this.songService = songService;
+        this.songDAO = songDAO;
     }
 
     @Override
@@ -38,20 +42,29 @@ public class ArtistServiceImpl implements ArtistService {
 
     @Override
     public Artist save(Artist artist) {
-        if (artist.getSongs() != null) {
-            for (Song song : artist.getSongs()) {
-                songService.save(song);
-                song.setArtist(artist);
+        Artist foundArtist = artistDAO.findByName(artist.getName());
+        if (foundArtist == null) {
+            foundArtist = new Artist(artist.getName());
+            if (artist.getSongs() != null) {
+                for (Song song : artist.getSongs()) {
+                    foundArtist.addSong(song);
+                }
             }
-        }
-
-        String artistName = artist.getName();
-        Artist foundArtist = findByName(artistName);
-        if (foundArtist != null) {
+            return artistDAO.save(foundArtist);
+        } else {
+            if (artist.getSongs() != null) {
+                for (Song song : artist.getSongs()) {
+                    Song foundSong = songDAO.findByTitleAndAlbum(song.getTitle(), song.getAlbum());
+                    if (foundSong == null) {
+                        foundArtist.addSong(song);
+                        songService.save(song);
+                    }
+                }
+            }
             throw new DuplicateArtistException("Artist already exists: " + foundArtist);
         }
-        return artistDAO.save(artist);
     }
+
 
     @Override
     public void deleteById(Long id) {

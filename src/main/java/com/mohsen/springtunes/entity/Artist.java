@@ -45,6 +45,9 @@ public class Artist {
     }
 
     public List<Song> getSongs() {
+        if (songs == null) {
+            songs = new ArrayList<>();
+        }
         return songs;
     }
 
